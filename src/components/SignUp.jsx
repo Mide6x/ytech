@@ -2,36 +2,45 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from './Navbar';
 
-function Login() {
+function SignUp() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
+        username: '',
         email: '',
         password: '',
-        rememberMe: false
+        confirmPassword: ''
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: value
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
         setError('');
+        setIsLoading(true);
+
+        // Basic validation
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
+            setIsLoading(false);
+            return;
+        }
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch('http://localhost:3000/api/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    username: formData.username,
                     email: formData.email,
                     password: formData.password
                 })
@@ -39,16 +48,15 @@ function Login() {
 
             const data = await response.json();
 
-            if (data.status === 'success') {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.data.user));
-                if (formData.rememberMe) {
-                    localStorage.setItem('userEmail', formData.email);
-                }
-                navigate('/dashboard');
-            } else {
-                setError(data.message || 'Login failed');
+            if (!response.ok) {
+                throw new Error(data.message || 'Sign up failed');
             }
+
+            // Store token
+            localStorage.setItem('token', data.token);
+            
+            // Redirect to dashboard
+            navigate('/dashboard');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -60,14 +68,25 @@ function Login() {
         <>
             <div className="background-animation"></div>
             <Navbar />
-            <main className="login-container">
-                <div className="login-box">
-                    <h2>Welcome Back!</h2>
-                    <p className="login-subtitle">Continue your Yorùbá learning journey</p>
+            <main className="signup-container">
+                <div className="signup-box">
+                    <h2>Create Account</h2>
+                    <p className="signup-subtitle">Join the Yorùbá learning community</p>
                     
                     {error && <div className="error-message">{error}</div>}
                     
-                    <form className="login-form" onSubmit={handleSubmit}>
+                    <form className="signup-form" onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <i className="fas fa-user"></i>
+                            <input 
+                                type="text" 
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                placeholder="Username" 
+                                required 
+                            />
+                        </div>
                         <div className="form-group">
                             <i className="fas fa-envelope"></i>
                             <input 
@@ -90,28 +109,28 @@ function Login() {
                                 required 
                             />
                         </div>
-                        <div className="form-options">
-                            <label>
-                                <input 
-                                    type="checkbox" 
-                                    name="rememberMe"
-                                    checked={formData.rememberMe}
-                                    onChange={handleChange}
-                                /> Remember me
-                            </label>
-                            <a href="#" className="forgot-password">Forgot Password?</a>
+                        <div className="form-group">
+                            <i className="fas fa-lock"></i>
+                            <input 
+                                type="password" 
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                placeholder="Confirm Password" 
+                                required 
+                            />
                         </div>
                         <button 
                             type="submit" 
-                            className="login-button"
+                            className="signup-button"
                             disabled={isLoading}
                         >
-                            {isLoading ? 'Logging in...' : 'Log In'}
+                            {isLoading ? 'Creating Account...' : 'Sign Up'}
                         </button>
                     </form>
                     
-                    <p className="signup-link">
-                        Don&apos;t have an account? <Link to="/signup">Sign up</Link>
+                    <p className="login-link">
+                        Already have an account? <Link to="/login">Log in</Link>
                     </p>
                 </div>
             </main>
@@ -119,4 +138,4 @@ function Login() {
     );
 }
 
-export default Login; 
+export default SignUp; 
