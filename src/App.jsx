@@ -6,6 +6,10 @@ import Dashboard from './useraccount/dashboard';
 import Progress from './useraccount/components/Progress';
 import Tests from './useraccount/components/Tests';
 import Settings from './useraccount/components/Settings';
+import AdminDashboard from './adminaccount/admindashboard';
+import ManageLessons from './adminaccount/components/ManageLessons';
+import ManageUsers from './adminaccount/components/ManageUsers';
+import AdminSettings from './adminaccount/components/AdminSettings';
 import CursorFollower from './components/CursorFollower';
 import './styles/global.css';
 import { useEffect } from 'react';
@@ -28,6 +32,12 @@ function App() {
         <Route path="/dashboard/progress" element={<Progress />} />
         <Route path="/dashboard/practice" element={<Tests />} />
         <Route path="/dashboard/settings" element={<Settings />} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/lessons" element={<ManageLessons />} />
+        <Route path="/admin/users" element={<ManageUsers />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
       </Routes>
     </Router>
   );

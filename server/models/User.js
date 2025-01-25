@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: [true, 'Please provide a username'],
-        unique: true
+        unique: true,
+        trim: true
     },
     email: {
         type: String,
@@ -19,23 +20,22 @@ const userSchema = new mongoose.Schema({
         minlength: 8,
         select: false
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
     points: {
         type: Number,
         default: 0
     },
     streak: {
         count: { type: Number, default: 0 },
-        lastLogin: { type: Date, default: null }
+        lastLogin: { type: Date }
     },
     completedLessons: [{
-        lessonId: {
-            type: mongoose.Schema.ObjectId,
-            ref: 'Lesson'
-        },
-        completedAt: {
-            type: Date,
-            default: Date.now
-        }
+        type: mongoose.Schema.ObjectId,
+        ref: 'Lesson'
     }],
     lastLoginDate: {
         type: Date,
@@ -49,6 +49,11 @@ userSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, 12);
     next();
 });
+
+// Add method to check password
+userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 // Update streak and points on login
 userSchema.methods.updateLoginStreak = async function() {
@@ -86,14 +91,11 @@ userSchema.methods.updateLoginStreak = async function() {
 userSchema.methods.completeLesson = async function(lessonId) {
     // Check if lesson is already completed
     const isCompleted = this.completedLessons.some(
-        lesson => lesson.lessonId.toString() === lessonId.toString()
+        lesson => lesson.toString() === lessonId.toString()
     );
 
     if (!isCompleted) {
-        this.completedLessons.push({
-            lessonId,
-            completedAt: new Date()
-        });
+        this.completedLessons.push(lessonId);
         this.points += 50; // Points for completing lesson
         await this.save();
         return true;

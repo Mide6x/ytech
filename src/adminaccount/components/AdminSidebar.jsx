@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-function Sidebar({ user, isOpen, onClose }) {
+function AdminSidebar({ user, isOpen, onClose }) {
     const location = useLocation();
 
     const getInitial = (username) => {
@@ -29,29 +29,29 @@ function Sidebar({ user, isOpen, onClose }) {
             <nav className="dashboard-menu">
                 <div className="menu-links">
                     <Link 
-                        to="/dashboard" 
-                        className={`menu-item ${isActiveRoute('/dashboard') ? 'active' : ''}`}
+                        to="/admin/dashboard" 
+                        className={`menu-item ${isActiveRoute('/admin/dashboard') ? 'active' : ''}`}
                     >
-                        <i className="fas fa-book-open"></i>
-                        <span>My Lessons</span>
+                        <i className="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
                     </Link>
                     <Link 
-                        to="/dashboard/progress" 
-                        className={`menu-item ${isActiveRoute('/dashboard/progress') ? 'active' : ''}`}
+                        to="/admin/lessons" 
+                        className={`menu-item ${isActiveRoute('/admin/lessons') ? 'active' : ''}`}
                     >
-                        <i className="fas fa-chart-line"></i>
-                        <span>Progress</span>
+                        <i className="fas fa-book"></i>
+                        <span>Manage Lessons</span>
                     </Link>
                     <Link 
-                        to="/dashboard/practice" 
-                        className={`menu-item ${isActiveRoute('/dashboard/practice') ? 'active' : ''}`}
+                        to="/admin/users" 
+                        className={`menu-item ${isActiveRoute('/admin/users') ? 'active' : ''}`}
                     >
-                        <i className="fas fa-pen"></i>
-                        <span>Tests</span>
+                        <i className="fas fa-users"></i>
+                        <span>Manage Users</span>
                     </Link>
                     <Link 
-                        to="/dashboard/settings" 
-                        className={`menu-item ${isActiveRoute('/dashboard/settings') ? 'active' : ''}`}
+                        to="/admin/settings" 
+                        className={`menu-item ${isActiveRoute('/admin/settings') ? 'active' : ''}`}
                     >
                         <i className="fas fa-cog"></i>
                         <span>Settings</span>
@@ -62,7 +62,7 @@ function Sidebar({ user, isOpen, onClose }) {
     );
 }
 
-Sidebar.propTypes = {
+AdminSidebar.propTypes = {
     user: PropTypes.shape({
         username: PropTypes.string,
         email: PropTypes.string
@@ -71,4 +71,4 @@ Sidebar.propTypes = {
     onClose: PropTypes.func.isRequired
 };
 
-export default Sidebar; 
+export default AdminSidebar; 

@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
-function Header({ onMenuClick, user }) {
+function AdminHeader({ onMenuClick, user }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('isAdmin');
         navigate('/login');
     };
 
@@ -17,11 +18,11 @@ function Header({ onMenuClick, user }) {
                     <button className="menu-button" onClick={onMenuClick}>
                         <i className="fas fa-bars"></i>
                     </button>
-                    <h1>Dashboard</h1>
+                    <h1>Admin Dashboard</h1>
                 </div>
                 <div className="nav-right">
                     <span className="user-name">
-                        <i className="fas fa-user"></i> {user?.username}
+                        <i className="fas fa-user-shield"></i> {user?.username}
                     </span>
                     <button className="logout-button" onClick={handleLogout}>
                         <i className="fas fa-sign-out-alt"></i>
@@ -33,7 +34,7 @@ function Header({ onMenuClick, user }) {
     );
 }
 
-Header.propTypes = {
+AdminHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
     user: PropTypes.shape({
         username: PropTypes.string,
@@ -41,4 +42,4 @@ Header.propTypes = {
     })
 };
 
-export default Header; 
+export default AdminHeader; 

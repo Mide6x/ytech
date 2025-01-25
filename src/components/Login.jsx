@@ -11,6 +11,7 @@ function Login() {
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isAdminLogin, setIsAdminLogin] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -26,7 +27,11 @@ function Login() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const endpoint = isAdminLogin ? 
+                'http://localhost:3000/api/auth/admin/login' : 
+                'http://localhost:3000/api/auth/login';
+
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -39,18 +44,25 @@ function Login() {
 
             const data = await response.json();
 
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed');
+            }
+
             if (data.status === 'success') {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.data.user));
+                localStorage.setItem('isAdmin', isAdminLogin);
+                
                 if (formData.rememberMe) {
                     localStorage.setItem('userEmail', formData.email);
                 }
-                navigate('/dashboard');
+                
+                navigate(isAdminLogin ? '/admin/dashboard' : '/dashboard');
             } else {
                 setError(data.message || 'Login failed');
             }
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -99,7 +111,15 @@ function Login() {
                                     onChange={handleChange}
                                 /> Remember me
                             </label>
-                            <a href="#" className="forgot-password">Forgot Password?</a>
+                            <button 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setIsAdminLogin(!isAdminLogin);
+                                }} 
+                                className="admin-login-toggle"
+                            >
+                                {isAdminLogin ? 'Login as User' : 'Login as Admin'}
+                            </button>
                         </div>
                         <button 
                             type="submit" 

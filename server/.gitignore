@@ -1,4 +1,8 @@
 .env
+.env2
 .env.local
 node_modules
 .DS_Store
+scripts/createAdmin.js
+.env.example
+uploads/
