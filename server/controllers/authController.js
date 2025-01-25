@@ -1,10 +1,9 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import { config } from '../config.js';
-import bcrypt from 'bcryptjs';
 
-const signToken = (id) => {
-    return jwt.sign({ id }, config.jwtSecret, {
+const signToken = (id, role) => {
+    return jwt.sign({ id, role }, config.jwtSecret, {
         expiresIn: config.jwtExpiresIn
     });
 };
@@ -14,20 +13,23 @@ export const signup = async (req, res) => {
         const newUser = await User.create({
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            role: 'user' // Explicitly set role to 'user'
         });
 
-        const token = signToken(newUser._id);
+        const token = signToken(newUser._id, newUser.role);
+
+        // Remove password from output
+        newUser.password = undefined;
 
         res.status(201).json({
             status: 'success',
             token,
-            data: {
-                user: {
-                    id: newUser._id,
-                    username: newUser.username,
-                    email: newUser.email
-                }
+            user: {
+                _id: newUser._id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role
             }
         });
     } catch (err) {
@@ -42,33 +44,27 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if email and password exist
-        if (!email || !password) {
-            return res.status(400).json({
-                status: 'fail',
-                message: 'Please provide email and password'
-            });
-        }
-
-        // Check if user exists && password is correct
+        // Find user by email
         const user = await User.findOne({ email }).select('+password');
         
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user) {
             return res.status(401).json({
                 status: 'fail',
-                message: 'Incorrect email or password'
+                message: 'Invalid email or password'
             });
         }
 
-        // Update streak and points
-        await user.updateLoginStreak();
+        // Check password
+        const isPasswordValid = await user.comparePassword(password);
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                status: 'fail',
+                message: 'Invalid email or password'
+            });
+        }
 
         // Create token
-        const token = jwt.sign(
-            { id: user._id },
-            config.jwtSecret,
-            { expiresIn: config.jwtExpiresIn }
-        );
+        const token = signToken(user._id, user.role);
 
         // Remove password from output
         user.password = undefined;
@@ -76,24 +72,64 @@ export const login = async (req, res) => {
         res.status(200).json({
             status: 'success',
             token,
-            data: {
-                user: {
-                    id: user._id,
-                    username: user.username,
-                    email: user.email,
-                    stats: {
-                        points: user.points,
-                        streak: user.streak.count,
-                        completedLessons: user.completedLessons.length
-                    }
-                }
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
             }
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(400).json({
-            status: 'fail',
-            message: error.message
+        res.status(500).json({
+            status: 'error',
+            message: 'Error logging in'
+        });
+    }
+};
+
+export const register = async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                status: 'fail',
+                message: 'Email already registered'
+            });
+        }
+
+        // Create new user (role defaults to 'user')
+        const user = await User.create({
+            username,
+            email,
+            password,
+            role: 'user' // Explicitly set role to 'user'
+        });
+
+        // Create token
+        const token = signToken(user._id, user.role);
+
+        // Remove password from output
+        user.password = undefined;
+
+        res.status(201).json({
+            status: 'success',
+            token,
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error registering user'
         });
     }
 }; 

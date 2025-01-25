@@ -9,8 +9,7 @@
         "sourceType": "module"
     },
     "globals": {
-        "process": true,
-        "globalThis": true
+        "process": true
     },
     "rules": {
         "no-undef": "error"

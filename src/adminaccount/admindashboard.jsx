@@ -34,19 +34,25 @@ function AdminDashboard() {
         try {
             const response = await fetch('http://localhost:3000/api/admin/metrics', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
                 }
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
 
             if (data.status === 'success') {
                 setMetrics(data.metrics);
             } else {
-                setError(data.message);
+                setError(data.message || 'Failed to fetch metrics');
             }
         } catch (error) {
-            setError('Error fetching metrics');
             console.error('Error:', error);
+            setError('Error fetching metrics: ' + error.message);
         } finally {
             setIsLoading(false);
         }

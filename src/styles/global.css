@@ -70,7 +70,7 @@ body {
 /* Header and Navigation */
 header {
     padding: 1rem 2rem;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0);
     backdrop-filter: blur(10px);
     position: fixed;
     width: 100%;
@@ -114,11 +114,12 @@ nav {
     list-style: none;
     margin: 0;
     padding: 0;
+    
 }
 
 .nav-links li a {
     text-decoration: none;
-    color: var(--text-color);
+    color: inherit;
     font-weight: 500;
     transition: color 0.3s;
     cursor: pointer;

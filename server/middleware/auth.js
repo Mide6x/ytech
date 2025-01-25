@@ -4,16 +4,18 @@ import User from '../models/User.js';
 
 export const protect = async (req, res, next) => {
     try {
-        // 1) Get token from header
+        // 1) Get token
         let token;
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.split(' ')[1];
+        const authHeader = req.headers.authorization;
+
+        if (authHeader && authHeader.startsWith('Bearer')) {
+            token = authHeader.split(' ')[1];
         }
 
         if (!token) {
             return res.status(401).json({
                 status: 'fail',
-                message: 'You are not logged in. Please log in to get access.'
+                message: 'Please log in to access this resource'
             });
         }
 
@@ -25,7 +27,7 @@ export const protect = async (req, res, next) => {
         if (!currentUser) {
             return res.status(401).json({
                 status: 'fail',
-                message: 'The user belonging to this token no longer exists.'
+                message: 'The user no longer exists'
             });
         }
 
@@ -33,10 +35,10 @@ export const protect = async (req, res, next) => {
         req.user = currentUser;
         next();
     } catch (error) {
-        console.error('Auth middleware error:', error);
+        console.error('Auth error:', error);
         res.status(401).json({
             status: 'fail',
-            message: 'Invalid token or authorization failed'
+            message: 'Please log in to access this resource'
         });
     }
 }; 

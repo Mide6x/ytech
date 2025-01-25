@@ -40,19 +40,31 @@ const userSchema = new mongoose.Schema({
     lastLoginDate: {
         type: Date,
         default: null
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
-// Password encryption middleware
+// Hash password before saving
 userSchema.pre('save', async function(next) {
+    // Only run if password is modified
     if (!this.isModified('password')) return next();
+
+    // Hash password with cost of 12
     this.password = await bcrypt.hash(this.password, 12);
     next();
 });
 
-// Add method to check password
-userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
-    return await bcrypt.compare(candidatePassword, userPassword);
+// Instance method to check password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (error) {
+        console.error('Password comparison error:', error);
+        return false;
+    }
 };
 
 // Update streak and points on login

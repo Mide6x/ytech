@@ -20,7 +20,7 @@ function Dashboard() {
 
         const fetchUserData = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/user/profile', {
+                const response = await fetch('http://localhost:3000/api/users/profile', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'

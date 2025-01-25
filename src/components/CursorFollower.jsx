@@ -1,52 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function CursorFollower() {
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [trails, setTrails] = useState([]);
-    const [isVisible, setIsVisible] = useState(false);
+    const [cursors, setCursors] = useState([]);
 
     useEffect(() => {
-        const updatePosition = (e) => {
-            setPosition({ x: e.clientX, y: e.clientY });
-            setIsVisible(true);
-            
-            // Add new trail point
-            setTrails(prev => [...prev, { x: e.clientX, y: e.clientY, id: Date.now() }]
-                .slice(-5)); // Keep only last 5 trail points
+        const handleMouseMove = (e) => {
+            const newCursor = {
+                id: Date.now() + Math.random(), // Create a truly unique ID
+                x: e.clientX,
+                y: e.clientY,
+                timestamp: Date.now()
+            };
+
+            setCursors(prevCursors => {
+                // Keep only the last few cursors to avoid performance issues
+                const recentCursors = prevCursors
+                    .filter(cursor => Date.now() - cursor.timestamp < 500)
+                    .slice(-5);
+                return [...recentCursors, newCursor];
+            });
         };
 
-        const handleMouseLeave = () => setIsVisible(false);
-        const handleMouseEnter = () => setIsVisible(true);
-
-        window.addEventListener('mousemove', updatePosition);
-        document.addEventListener('mouseleave', handleMouseLeave);
-        document.addEventListener('mouseenter', handleMouseEnter);
-
-        return () => {
-            window.removeEventListener('mousemove', updatePosition);
-            document.removeEventListener('mouseleave', handleMouseLeave);
-            document.removeEventListener('mouseenter', handleMouseEnter);
-        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
-
-    if (!isVisible) return null;
 
     return (
         <>
-            <div
-                className="cursor-follower"
-                style={{
-                    transform: `translate(${position.x - 10}px, ${position.y - 10}px)`,
-                    opacity: isVisible ? 0.6 : 0
-                }}
-            />
-            {trails.map((trail, index) => (
+            {cursors.map(cursor => (
                 <div
-                    key={trail.id}
-                    className="cursor-trail"
+                    key={cursor.id}
+                    className="cursor-follower"
                     style={{
-                        transform: `translate(${trail.x - 4}px, ${trail.y - 4}px)`,
-                        opacity: (index + 1) * 0.1
+                        left: cursor.x,
+                        top: cursor.y,
+                        position: 'fixed',
+                        pointerEvents: 'none',
+                        transform: 'translate(-50%, -50%)',
+                        transition: 'all 0.1s ease-out'
                     }}
                 />
             ))}

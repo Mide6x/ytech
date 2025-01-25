@@ -1,25 +1,15 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import '../styles/login.css';
 
 function Login() {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        rememberMe: false
-    });
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isAdminLogin, setIsAdminLogin] = useState(false);
-
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,42 +17,35 @@ function Login() {
         setError('');
 
         try {
-            const endpoint = isAdminLogin ? 
-                'http://localhost:3000/api/auth/admin/login' : 
-                'http://localhost:3000/api/auth/login';
-
-            const response = await fetch(endpoint, {
+            const response = await fetch('http://localhost:3000/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    email: formData.email,
-                    password: formData.password
-                })
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
-            }
-
-            if (data.status === 'success') {
+            if (response.ok) {
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.data.user));
-                localStorage.setItem('isAdmin', isAdminLogin);
+                localStorage.setItem('user', JSON.stringify(data.user));
                 
-                if (formData.rememberMe) {
-                    localStorage.setItem('userEmail', formData.email);
+                // Set isAdmin flag based on user role
+                localStorage.setItem('isAdmin', data.user.role === 'admin');
+
+                // Redirect based on user role
+                if (data.user.role === 'admin') {
+                    navigate('/admin/dashboard');
+                } else {
+                    navigate('/dashboard');
                 }
-                
-                navigate(isAdminLogin ? '/admin/dashboard' : '/dashboard');
             } else {
                 setError(data.message || 'Login failed');
             }
-        } catch (err) {
-            setError(err.message || 'Something went wrong. Please try again.');
+        } catch (error) {
+            console.error('Login error:', error);
+            setError('An error occurred during login');
         } finally {
             setIsLoading(false);
         }
@@ -74,21 +57,24 @@ function Login() {
             <Navbar />
             <main className="login-container">
                 <div className="login-box">
-                    <h2>Welcome Back!</h2>
+                    <h2 className="login-title">Welcome Back!</h2>
                     <p className="login-subtitle">Continue your Yorùbá learning journey</p>
                     
                     {error && <div className="error-message">{error}</div>}
                     
                     <form className="login-form" onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <i className="fas fa-envelope"></i>
+                    
+                                <i className="fas fa-envelope"></i>
+                    
                             <input 
                                 type="email" 
                                 name="email"
-                                value={formData.email}
-                                onChange={handleChange}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Email" 
                                 required 
+                                style={{ paddingLeft: '2.5rem' }} // Adjust padding to prevent overlap
                             />
                         </div>
                         <div className="form-group">
@@ -96,10 +82,11 @@ function Login() {
                             <input 
                                 type="password" 
                                 name="password"
-                                value={formData.password}
-                                onChange={handleChange}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Password" 
                                 required 
+                                style={{ paddingLeft: '2.5rem' }}
                             />
                         </div>
                         <div className="form-options">
@@ -107,8 +94,11 @@ function Login() {
                                 <input 
                                     type="checkbox" 
                                     name="rememberMe"
-                                    checked={formData.rememberMe}
-                                    onChange={handleChange}
+                                    checked={isAdminLogin}
+                                    onChange={(e) => {
+                                        e.preventDefault();
+                                        setIsAdminLogin(!isAdminLogin);
+                                    }}
                                 /> Remember me
                             </label>
                             <button 

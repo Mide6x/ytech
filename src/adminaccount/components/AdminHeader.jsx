@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { FaBars } from 'react-icons/fa';
+import ThemeToggle from '../../components/ThemeToggle';
+import './AdminHeader.css';
 
 function AdminHeader({ onMenuClick, user }) {
     const navigate = useNavigate();
@@ -12,18 +15,20 @@ function AdminHeader({ onMenuClick, user }) {
     };
 
     return (
-        <header className="dashboard-nav">
-            <div className="dashboard-header">
-                <div className="nav-left">
-                    <button className="menu-button" onClick={onMenuClick}>
-                        <i className="fas fa-bars"></i>
-                    </button>
-                    <h1>Admin Dashboard</h1>
-                </div>
-                <div className="nav-right">
-                    <span className="user-name">
-                        <i className="fas fa-user-shield"></i> {user?.username}
-                    </span>
+        <header className="admin-header">
+            <div className="header-left">
+                <button className="menu-btn" onClick={onMenuClick}>
+                    <FaBars />
+                </button>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div className="header-right">
+                <ThemeToggle />
+                <div className="admin-info">
+                    <span>{user?.username}</span>
+                    <div className="admin-avatar">
+                        {user?.username.charAt(0).toUpperCase()}
+                    </div>
                     <button className="logout-button" onClick={handleLogout}>
                         <i className="fas fa-sign-out-alt"></i>
                         <span>Logout</span>

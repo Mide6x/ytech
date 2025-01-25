@@ -13,6 +13,7 @@ import AdminSettings from './adminaccount/components/AdminSettings';
 import CursorFollower from './components/CursorFollower';
 import './styles/global.css';
 import { useEffect } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   useEffect(() => {
@@ -22,24 +23,26 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <CursorFollower />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/progress" element={<Progress />} />
-        <Route path="/dashboard/practice" element={<Tests />} />
-        <Route path="/dashboard/settings" element={<Settings />} />
-        
-        {/* Admin Routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/lessons" element={<ManageLessons />} />
-        <Route path="/admin/users" element={<ManageUsers />} />
-        <Route path="/admin/settings" element={<AdminSettings />} />
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <CursorFollower />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/progress" element={<Progress />} />
+          <Route path="/dashboard/practice" element={<Tests />} />
+          <Route path="/dashboard/settings" element={<Settings />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/lessons" element={<ManageLessons />} />
+          <Route path="/admin/users" element={<ManageUsers />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 
