@@ -9,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import lessonRoutes from './routes/lessonRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import noteRoutes from './routes/noteRoutes.js';
 
 const app = express();
 
@@ -17,15 +18,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Your Vite frontend URL
+    credentials: true
+}));
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', (req, res, next) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);  // Admin routes should be before user routes
 app.use('/api/lessons', lessonRoutes);
+app.use('/api/notes', noteRoutes);
 
 // Database connection
 const connectDB = async () => {

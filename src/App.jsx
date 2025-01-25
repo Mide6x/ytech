@@ -14,7 +14,7 @@ import CursorFollower from './components/CursorFollower';
 import './styles/global.css';
 import { useEffect } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
-
+import LessonPlayer from './components/LessonPlayer';
 function App() {
   useEffect(() => {
     // Check for saved dark mode preference
@@ -34,6 +34,7 @@ function App() {
           <Route path="/dashboard/progress" element={<Progress />} />
           <Route path="/dashboard/practice" element={<Tests />} />
           <Route path="/dashboard/settings" element={<Settings />} />
+          <Route path="/lessons/:lessonId" element={<LessonPlayer />} />
           
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

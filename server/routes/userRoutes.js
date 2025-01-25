@@ -1,9 +1,12 @@
 import express from 'express';
-import { getProfile } from '../controllers/userController.js';
+import { getProfile, completeLesson } from '../controllers/userController.js';
 import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/profile', protect, getProfile);
+router.use(protect); // Protect all user routes
+
+router.get('/profile', getProfile);
+router.post('/complete-lesson/:lessonId', completeLesson);
 
 export default router; 

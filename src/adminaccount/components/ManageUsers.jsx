@@ -69,7 +69,7 @@ function ManageUsers() {
         if (!window.confirm('Are you sure you want to delete this user?')) return;
 
         try {
-            const response = await fetch(`http://localhost:3000/api/admin/users/${userId}`, {
+            const response = await fetch(`${API_URLS.ADMIN_USERS}/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,

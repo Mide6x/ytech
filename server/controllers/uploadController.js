@@ -1,9 +1,39 @@
 import multer from 'multer';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 
-// Configure multer for file upload
+const allowedTypes = {
+    video: [
+        'video/mp4',
+        'video/webm',
+        'video/ogg',
+        'video/quicktime',  // For QuickTime movies
+        'video/x-quicktime' // Alternative MIME type for QuickTime
+    ],
+    audio: [
+        'audio/mpeg',  // For MP3
+        'audio/mp3',   // Alternative MIME type for MP3
+        'audio/wav',
+        'audio/wave',  // Alternative MIME type for WAV
+        'audio/ogg',
+        'audio/x-wav'  // Alternative MIME type for WAV
+    ]
+};
+
+const mimeTypes = {
+    video: {
+        'mp4': 'video/mp4',
+        'mov': 'video/quicktime',
+        'webm': 'video/webm',
+        'ogg': 'video/ogg'
+    },
+    audio: {
+        'mp3': 'audio/mpeg',
+        'wav': 'audio/wav',
+        'ogg': 'audio/ogg'
+    }
+};
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadDir = 'uploads/';
@@ -14,23 +44,18 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-        const uniqueFileName = `${uuidv4()}${path.extname(file.originalname)}`;
-        cb(null, uniqueFileName);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = {
-        'video': ['video/mp4', 'video/webm', 'video/ogg'],
-        'audio': ['audio/mpeg', 'audio/wav', 'audio/ogg']
-    };
-
-    const mediaType = req.body.mediaType;
-    if (allowedTypes[mediaType] && allowedTypes[mediaType].includes(file.mimetype)) {
-        cb(null, true);
-    } else {
+    const mediaType = req.body.mediaType || 'video';
+    if (!allowedTypes[mediaType] || !allowedTypes[mediaType].includes(file.mimetype)) {
         cb(new Error(`Invalid file type. Allowed types for ${mediaType}: ${allowedTypes[mediaType].join(', ')}`));
+        return;
     }
+    cb(null, true);
 };
 
 export const upload = multer({
@@ -58,11 +83,17 @@ export const handleUpload = async (req, res) => {
                 });
             }
 
-            // Return the file URL
+            // Get file extension and set proper content type
+            const ext = path.extname(req.file.originalname).toLowerCase().slice(1);
+            const mediaType = req.body.mediaType || 'video';
+            const contentType = mimeTypes[mediaType][ext] || `${mediaType}/${ext}`;
+
+            // Return the file URL with content type
             const mediaUrl = `/uploads/${req.file.filename}`;
             res.status(200).json({
                 status: 'success',
-                mediaUrl
+                mediaUrl,
+                contentType
             });
         });
     } catch (error) {

@@ -1,4 +1,4 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 export const API_URLS = {
     // Auth endpoints
@@ -13,6 +13,16 @@ export const API_URLS = {
     ADMIN_USERS: `${BACKEND_URL}/api/admin/users`,
     ADMIN_METRICS: `${BACKEND_URL}/api/admin/metrics`,
     
+    // Lesson endpoints
+    ADMIN_LESSONS: `${BACKEND_URL}/api/lessons`,
+    LESSONS: `${BACKEND_URL}/api/lessons`,
+    LESSON_DETAIL: (id) => `${BACKEND_URL}/api/lessons/${id}`,
+    
     // Upload endpoint
-    UPLOAD: `${BACKEND_URL}/api/upload`,
+    UPLOAD: `${BACKEND_URL}/api/lessons/upload`,
+
+    USER_COMPLETE_LESSON: (id) => `${BACKEND_URL}/api/users/complete-lesson/${id}`,
+
+    SAVE_NOTE: `${BACKEND_URL}/api/notes`,
+    GET_NOTE: (lessonId) => `${BACKEND_URL}/api/notes/${lessonId}`,
 }; 

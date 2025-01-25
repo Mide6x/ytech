@@ -1,0 +1,113 @@
+.lesson-player-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.lesson-content {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.media-container {
+    margin: 1.5rem 0;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.media-player {
+    width: 100%;
+    max-height: 600px;
+    background: #000;
+}
+
+.notes-section {
+    margin: 2rem 0;
+}
+
+.notes-section textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 120px;
+}
+
+.lesson-content-text {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 8px;
+}
+
+.completion-message {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 2rem;
+    background: var(--success-bg);
+    border-radius: 8px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.return-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.return-button:hover {
+    background: var(--primary-dark);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notes-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.save-notes-button {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.save-status {
+    color: var(--success-color);
+    font-size: 0.9rem;
+}
+
+.complete-button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.complete-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+} 

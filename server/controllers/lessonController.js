@@ -43,4 +43,27 @@ export const deleteLesson = async (req, res) => {
             message: error.message
         });
     }
+};
+
+export const getLesson = async (req, res) => {
+    try {
+        const lesson = await Lesson.findById(req.params.id);
+        
+        if (!lesson) {
+            return res.status(404).json({
+                status: 'fail',
+                message: 'Lesson not found'
+            });
+        }
+
+        res.status(200).json({
+            status: 'success',
+            lesson
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 'fail',
+            message: error.message
+        });
+    }
 }; 

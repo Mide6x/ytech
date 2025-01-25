@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from './AdminHeader';
 import AdminSidebar from './AdminSidebar';
+import { API_URLS } from '../../config/api';
 
 function ManageLessons() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -55,7 +56,7 @@ function ManageLessons() {
             formDataWithFile.append('media', mediaFile);
             formDataWithFile.append('mediaType', formData.mediaType);
 
-            const uploadResponse = await fetch('http://localhost:3000/api/upload', {
+            const uploadResponse = await fetch(API_URLS.UPLOAD, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -70,7 +71,7 @@ function ManageLessons() {
             }
 
             // Then create the lesson with the media URL
-            const lessonResponse = await fetch('http://localhost:3000/api/lessons', {
+            const lessonResponse = await fetch(`${API_URLS.ADMIN_LESSONS}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
