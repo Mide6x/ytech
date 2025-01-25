@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import '../styles/login.css';
+import { API_URLS } from '../config/api';
 
 function Login() {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Login() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch(API_URLS.LOGIN, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

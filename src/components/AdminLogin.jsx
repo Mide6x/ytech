@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { API_URLS } from '../config/api';
 function AdminLogin() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -9,7 +9,7 @@ function AdminLogin() {
         e.preventDefault();
         
         try {
-            const response = await fetch('http://localhost:3000/api/admin/login', {
+            const response = await fetch(API_URLS.ADMIN_LOGIN, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

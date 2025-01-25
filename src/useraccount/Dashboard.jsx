@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import ProgressOverview from './components/ProgressOverview';
 import RecentLessons from './components/RecentLessons';
+import { API_URLS } from '../config/api';
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ function Dashboard() {
 
         const fetchUserData = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/users/profile', {
+                const response = await fetch(API_URLS.USER_PROFILE, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'

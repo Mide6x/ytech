@@ -4,7 +4,7 @@ import AdminHeader from './AdminHeader';
 import AdminSidebar from './AdminSidebar';
 import { FaUserEdit, FaTrash, FaSearch, FaUserPlus } from 'react-icons/fa';
 import './ManageUsers.css';
-
+import { API_URLS } from '../../config/api';
 function ManageUsers() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [users, setUsers] = useState([]);
@@ -36,7 +36,7 @@ function ManageUsers() {
                 throw new Error('No authentication token found');
             }
 
-            const response = await fetch('http://localhost:3000/api/admin/users', {
+            const response = await fetch(API_URLS.ADMIN_USERS, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'

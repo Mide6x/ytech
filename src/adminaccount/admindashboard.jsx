@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './components/AdminSidebar';
 import AdminHeader from './components/AdminHeader';
+import { API_URLS } from '../config/api';
 
 function AdminDashboard() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -32,7 +33,7 @@ function AdminDashboard() {
 
     const fetchMetrics = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/admin/metrics', {
+            const response = await fetch(API_URLS.ADMIN_METRICS, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'
