@@ -35,6 +35,7 @@ function SignUp() {
         }
 
         try {
+            // First attempt signup
             const response = await fetch(API_URLS.SIGNUP, {
                 method: 'POST',
                 headers: {
@@ -48,7 +49,6 @@ function SignUp() {
             });
 
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.message || 'Sign up failed');
             }
@@ -56,7 +56,26 @@ function SignUp() {
             // Store token
             localStorage.setItem('token', data.token);
             
-            // Redirect to dashboard
+            // Attempt to send welcome email
+            try {
+                const emailResponse = await fetch('/.netlify/functions/welcome-email', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: formData.email,
+                        username: formData.username
+                    })
+                });
+                
+                if (!emailResponse.ok) {
+                    console.error('Welcome email failed to send');
+                    // Don't block signup if email fails
+                }
+            } catch (emailError) {
+                console.error('Welcome email error:', emailError);
+                // Continue with signup even if email fails
+            }
+            
+            // Proceed with navigation
             navigate('/dashboard');
         } catch (err) {
             setError(err.message);

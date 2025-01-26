@@ -15,6 +15,8 @@ import './styles/global.css';
 import { useEffect } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import LessonPlayer from './components/LessonPlayer';
+import NotFound from './components/NotFound';
+
 function App() {
   useEffect(() => {
     // Check for saved dark mode preference
@@ -41,6 +43,7 @@ function App() {
           <Route path="/admin/lessons" element={<ManageLessons />} />
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </ThemeProvider>
