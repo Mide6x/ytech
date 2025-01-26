@@ -44,46 +44,46 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Find user by email
+        // Find user and explicitly select password
         const user = await User.findOne({ email }).select('+password');
         
-        if (!user) {
+        if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({
                 status: 'fail',
-                message: 'Invalid email or password'
+                message: 'Incorrect email or password'
             });
         }
 
-        // Check password
-        const isPasswordValid = await user.comparePassword(password);
-        if (!isPasswordValid) {
-            return res.status(401).json({
-                status: 'fail',
-                message: 'Invalid email or password'
-            });
-        }
+        // Update login streak and points
+        await user.updateLoginStreak();
+
+        // Get fresh user data after streak update
+        const updatedUser = await User.findById(user._id);
 
         // Create token
-        const token = signToken(user._id, user.role);
-
-        // Remove password from output
-        user.password = undefined;
+        const token = jwt.sign({ id: user._id }, config.jwtSecret, {
+            expiresIn: '30d'
+        });
 
         res.status(200).json({
             status: 'success',
             token,
             user: {
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                role: user.role
+                id: updatedUser._id,
+                username: updatedUser.username,
+                email: updatedUser.email,
+                role: updatedUser.role,
+                stats: {
+                    points: updatedUser.points,
+                    streak: updatedUser.streak.count,
+                    completedLessons: updatedUser.completedLessons.length
+                }
             }
         });
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error logging in'
+        res.status(400).json({
+            status: 'fail',
+            message: error.message
         });
     }
 };
