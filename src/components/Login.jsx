@@ -87,7 +87,7 @@ function Login() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Password" 
                                 required 
-                                style={{ paddingLeft: '2.5rem' }}
+                                style={{ paddingLeft: '2.5rem', }}
                             />
                         </div>
                         <div className="form-options">

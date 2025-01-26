@@ -17,11 +17,30 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
+// CORS configuration
+const allowedOrigins = [
+    process.env.FRONTEND_URL2,          // Local development
+    process.env.FRONTEND_URL,           // Production frontend
+    process.env.FRONTEND_URL1           // www subdomain
+];
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Your Vite frontend URL
-    credentials: true
+    origin: function(origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Middleware
 app.use(express.json());
 app.use('/uploads', (req, res, next) => {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -34,6 +53,9 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);  // Admin routes should be before user routes
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/notes', noteRoutes);
+
+// Error handling for CORS preflight
+app.options('*', cors());
 
 // Database connection
 const connectDB = async () => {

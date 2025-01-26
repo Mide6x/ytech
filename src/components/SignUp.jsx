@@ -86,6 +86,7 @@ function SignUp() {
                                 onChange={handleChange}
                                 placeholder="Username" 
                                 required 
+                                style={{ paddingLeft: '2.5rem' }} 
                             />
                         </div>
                         <div className="form-group">
@@ -97,6 +98,7 @@ function SignUp() {
                                 onChange={handleChange}
                                 placeholder="Email" 
                                 required 
+                                style={{ paddingLeft: '2.5rem' }} 
                             />
                         </div>
                         <div className="form-group">
@@ -108,6 +110,7 @@ function SignUp() {
                                 onChange={handleChange}
                                 placeholder="Password" 
                                 required 
+                                style={{ paddingLeft: '2.5rem' }} 
                             />
                         </div>
                         <div className="form-group">
@@ -119,6 +122,7 @@ function SignUp() {
                                 onChange={handleChange}
                                 placeholder="Confirm Password" 
                                 required 
+                                style={{ paddingLeft: '2.5rem' }} 
                             />
                         </div>
                         <button 

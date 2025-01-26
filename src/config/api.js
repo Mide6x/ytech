@@ -1,4 +1,4 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const API_URLS = {
     // Auth endpoints
@@ -24,5 +24,16 @@ export const API_URLS = {
     USER_COMPLETE_LESSON: (id) => `${BACKEND_URL}/api/users/complete-lesson/${id}`,
 
     SAVE_NOTE: `${BACKEND_URL}/api/notes`,
-    GET_NOTE: (lessonId) => `${BACKEND_URL}/api/notes/${lessonId}`,
+    GET_NOTE: (lessonId) => `${BACKEND_URL}/api/notes/${lessonId}`
+};
+
+export const fetchWithAuth = async (url, options = {}) => {
+    return fetch(url, {
+        ...options,
+        credentials: 'include',
+        headers: {
+            ...options.headers,
+            'Content-Type': 'application/json',
+        }
+    });
 }; 

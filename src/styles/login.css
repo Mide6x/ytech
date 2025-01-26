@@ -2,7 +2,7 @@
   --primary-color: #2D3748; /* Updated to match the color context */
   --accent-color: #8B5CF6; /* Updated to match the color context */
   --error-color: #EC4899; /* Updated to match the color context */
-  --text-color: #FFFFFF; /* Updated to match the color context */
+  --text-color: #cd3030; /* Updated to match the color context */
   --border-radius: 12px;
 }
 
@@ -97,7 +97,7 @@
 }
 
 .form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(18, 1, 19, 0.4);
     opacity: 1;
     padding-left: 0.2rem; /* Add a little space after the icon */
 }
