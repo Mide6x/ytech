@@ -101,6 +101,7 @@ function LessonPlayer() {
                 setTimeout(() => setSaveStatus(''), 3000);
             }
         } catch (error) {
+            console.error('Error saving notes:', error);
             setSaveStatus('Error saving notes');
             setTimeout(() => setSaveStatus(''), 3000);
         }
